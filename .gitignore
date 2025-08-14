@@ -60,3 +60,6 @@ docker-compose*.yml
 # OS
 Thumbs.db
 Desktop.ini
+
+# claude
+.claude/*
