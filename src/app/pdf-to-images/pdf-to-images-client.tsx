@@ -13,7 +13,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
 
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 async function getPdfPageAsImage(pdf: pdfjsLib.PDFDocumentProxy, pageNumber: number, dpi: number) {
     const page = await pdf.getPage(pageNumber);
@@ -97,22 +97,34 @@ export default function PdfToImagesClient() {
                 const previewCanvas = previewCanvasRef.current;
                  if (previewCanvas) {
                     const previewContext = previewCanvas.getContext('2d');
-                    previewCanvas.height = viewport.height;
-                    previewCanvas.width = viewport.width;
-                    
-                    if(previewContext){
-                      await page.render({ canvasContext: previewContext, viewport: viewport }).promise;
+                    if (previewContext) {
+                        // Clear canvas before rendering
+                        previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+                        previewCanvas.height = viewport.height;
+                        previewCanvas.width = viewport.width;
+                        
+                        // Set canvas background to white
+                        previewContext.fillStyle = 'white';
+                        previewContext.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+                        
+                        await page.render({ canvasContext: previewContext, viewport: viewport }).promise;
                     }
                  }
             } catch (e) {
-                console.error("error rendering preview", e)
+                console.error("error rendering preview", e);
+                // Show error toast if preview fails
+                toast({
+                    title: "Preview Error",
+                    description: "Could not render PDF preview. Please try again.",
+                    variant: "destructive",
+                });
             } finally {
                 setIsPreviewLoading(false);
             }
         }
     };
     renderPreview();
-  }, [pdfDoc, currentPage, numPages]);
+  }, [pdfDoc, currentPage, numPages, toast]);
 
   const removePdf = () => {
     setPdfFile(null);
@@ -208,7 +220,7 @@ export default function PdfToImagesClient() {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(downloadUrl);
               }}
-              className="bg-accent-foreground text-accent hover:bg-accent-foreground/90"
+              className="bg-accent-foreground text-accent hover:bg-accent hover:text-accent-foreground"
               >
                 <Download className="mr-2 h-4 w-4"/>
                 Download ZIP

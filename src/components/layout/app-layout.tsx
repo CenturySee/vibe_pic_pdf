@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import { FileImage, FileText } from 'lucide-react';
 import {
   SidebarProvider,
@@ -15,9 +16,22 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { AppLogo } from '@/components/icons';
+import { useToast } from '@/hooks/use-toast';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { dismiss } = useToast();
+  const dismissRef = useRef(dismiss);
+
+  // Update ref when dismiss function changes
+  useEffect(() => {
+    dismissRef.current = dismiss;
+  }, [dismiss]);
+
+  // Dismiss all toasts when route changes
+  useEffect(() => {
+    dismissRef.current();
+  }, [pathname]);
 
   return (
     <SidebarProvider>
