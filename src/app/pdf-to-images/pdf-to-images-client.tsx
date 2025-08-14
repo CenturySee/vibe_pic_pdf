@@ -248,14 +248,14 @@ export default function PdfToImagesClient() {
   }
 
   return (
-    <div className="container mx-auto max-w-5xl">
+    <div className="container mx-auto max-w-7xl">
       <PageHeader
         title="PDF to Image Converter"
         description="Upload a PDF and convert each page into a high-resolution image. Choose your desired format and quality."
       />
 
-      <div className="grid gap-8 lg:grid-cols-5">
-        <div className="lg:col-span-3">
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle>Upload PDF</CardTitle>
@@ -265,7 +265,7 @@ export default function PdfToImagesClient() {
               {!pdfFile ? (
                 <label
                   htmlFor="pdf-upload"
-                  className="relative flex flex-col items-center justify-center w-full p-12 border-2 border-dashed rounded-lg cursor-pointer transition-colors hover:border-primary hover:bg-muted"
+                  className="relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed rounded-lg cursor-pointer transition-colors hover:border-primary hover:bg-muted"
                 >
                   <Upload className="w-10 h-10 mb-4 text-muted-foreground" />
                   <span className="font-semibold text-primary">Click to upload</span>
@@ -312,7 +312,7 @@ export default function PdfToImagesClient() {
             )}
           </Card>
         </div>
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-1">
           <Card className="sticky top-20">
             <CardHeader>
               <CardTitle>Settings</CardTitle>
