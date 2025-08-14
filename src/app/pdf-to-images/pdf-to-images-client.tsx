@@ -252,6 +252,7 @@ export default function PdfToImagesClient() {
       <PageHeader
         title="PDF to Image Converter"
         description="Upload a PDF and convert each page into a high-resolution image. Choose your desired format and quality."
+        titleColor="text-green-600"
       />
 
       <div className="grid gap-8 lg:grid-cols-3">

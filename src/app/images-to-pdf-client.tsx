@@ -291,6 +291,7 @@ export default function ImagesToPdfClient() {
         <PageHeader 
           title="Image to PDF Converter"
           description="Upload your images, reorder them by dragging, and combine them into a single, high-quality PDF document."
+          titleColor="text-blue-600"
         />
 
         <div className="grid gap-8 lg:grid-cols-3">
