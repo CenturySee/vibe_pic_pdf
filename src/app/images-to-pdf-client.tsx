@@ -18,6 +18,7 @@ interface UploadedImage {
   id: string;
   file: File;
   preview: string;
+  base64Data: string;
 }
 
 type PageOrientation = 'p' | 'l' | 'auto';
@@ -101,6 +102,14 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, moveImage, removeIm
 };
 
 
+function generateId() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 export default function ImagesToPdfClient() {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [pdfName, setPdfName] = useState<string>('converted-document');
@@ -116,16 +125,37 @@ export default function ImagesToPdfClient() {
       const files = Array.from(event.target.files);
       const imageFiles = files.filter(file => file.type.startsWith('image/'));
       
-      const newImages: UploadedImage[] = imageFiles.map(file => ({
-        id: crypto.randomUUID(),
-        file,
-        preview: URL.createObjectURL(file),
-      }));
+      const newImages: Promise<UploadedImage>[] = imageFiles.map(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const base64Data = e.target?.result as string;
+            const preview = URL.createObjectURL(file);
+                      resolve({
+            id: generateId(),
+            file,
+            preview,
+            base64Data,
+          });;
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
 
-      setImages(prev => [...prev, ...newImages]);
-      if (event.target) {
-        event.target.value = '';
-      }
+      Promise.all(newImages).then(images => {
+        setImages(prev => [...prev, ...images]);
+        if (event.target) {
+          event.target.value = '';
+        }
+      }).catch(error => {
+        console.error("Error reading files:", error);
+        toast({
+          title: "File Read Error",
+          description: "An error occurred while reading the uploaded files.",
+          variant: "destructive",
+        });
+      });
     }
   };
 
@@ -188,7 +218,7 @@ export default function ImagesToPdfClient() {
                 const i = new window.Image();
                 i.onload = () => resolve(i);
                 i.onerror = reject;
-                i.src = image.preview;
+                i.src = image.base64Data;
             });
             
             const imgWidth = img.width;
@@ -219,30 +249,33 @@ export default function ImagesToPdfClient() {
         }
         
         const pdfBlob = doc.output('blob');
-        const downloadUrl = URL.createObjectURL(pdfBlob);
-        
-        toast({
-            title: "Conversion Successful!",
-            description: `Your PDF "${pdfName}.pdf" is ready.`,
-            variant: "default",
-            duration: 10000,
-            className: "bg-accent text-accent-foreground border-accent",
-            action: (
-              <Button variant="outline" size="sm" onClick={() => {
-                const a = document.createElement('a');
-                a.href = downloadUrl;
-                a.download = `${pdfName}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(downloadUrl);
-              }}
-              className="bg-accent-foreground text-accent hover:bg-accent hover:text-accent-foreground"
-              >
-                Download
-              </Button>
-            ),
-          });
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64Data = reader.result as string;
+            
+            toast({
+                title: "Conversion Successful!",
+                description: `Your PDF "${pdfName}.pdf" is ready.`,
+                variant: "default",
+                duration: 10000,
+                className: "bg-accent text-accent-foreground border-accent",
+                action: (
+                  <Button variant="outline" size="sm" onClick={() => {
+                    const a = document.createElement('a');
+                    a.href = base64Data;
+                    a.download = `${pdfName}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                  }}
+                  className="bg-accent-foreground text-accent hover:bg-accent hover:text-accent-foreground"
+                  >
+                    Download
+                  </Button>
+                ),
+              });
+        };
+        reader.readAsDataURL(pdfBlob);
 
     } catch (error) {
         console.error("PDF conversion failed:", error);

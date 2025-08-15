@@ -120,3 +120,8 @@ Image conversion failed: TypeError: (intermediate value) is not a constructor
 ---
 
 帮我重写readme文件，包含项目标题 (Project Title)、项目简介 (Description)、项目背景/动机 (Background/Motivation)、功能特性 (Features)、技术栈 (Tech Stack)、安装指南 (Installation)、使用方法 (Usage)等
+
+---
+
+当我在一台远程服务器上运行当前项目时，在images to pdf的页面上，当我上传图像时，网页上报了下面的错误，请问该如何解决? 
+The file at 'blob:http://ip:port/b033585a-f878-47a5-9570-0c6ebcccebf1' was loaded over an insecure connection. This file should be served over HTTPS. 

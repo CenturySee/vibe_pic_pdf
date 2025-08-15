@@ -207,31 +207,35 @@ export default function PdfToImagesClient() {
         }
 
         const zipBlob = await zip.generateAsync({type:"blob"});
-        const downloadUrl = URL.createObjectURL(zipBlob);
         const zipFilename = `${baseFilename}.zip`;
-
-        toast({
-            title: "Conversion Successful!",
-            description: `Your images have been zipped into "${zipFilename}".`,
-            variant: "default",
-            duration: 10000,
-            className: "bg-accent text-accent-foreground border-accent",
-            action: (
-              <Button variant="outline" size="sm" onClick={() => {
-                const a = document.createElement('a');
-                a.href = downloadUrl;
-                a.download = zipFilename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-              }}
-              className="bg-accent-foreground text-accent hover:bg-accent hover:text-accent-foreground"
-              >
-                <Download className="mr-2 h-4 w-4"/>
-                Download ZIP
-              </Button>
-            ),
-          });
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64Data = reader.result as string;
+            
+            toast({
+                title: "Conversion Successful!",
+                description: `Your images have been zipped into "${zipFilename}".`,
+                variant: "default",
+                duration: 10000,
+                className: "bg-accent text-accent-foreground border-accent",
+                action: (
+                  <Button variant="outline" size="sm" onClick={() => {
+                    const a = document.createElement('a');
+                    a.href = base64Data;
+                    a.download = zipFilename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                  }}
+                  className="bg-accent-foreground text-accent hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <Download className="mr-2 h-4 w-4"/>
+                    Download ZIP
+                  </Button>
+                ),
+              });
+        };
+        reader.readAsDataURL(zipBlob);
 
     } catch(error) {
         console.error("Image conversion failed:", error);

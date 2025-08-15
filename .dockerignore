@@ -26,3 +26,5 @@ yarn-error.log*
 # Claude-specific
 .claude
 .modified
+
+.vibe_process
