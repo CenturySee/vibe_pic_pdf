@@ -1,0 +1,122 @@
+我想做一个网页，实现下面的功能
+
+# 整体功能
+1. 图片拼接成pdf
+2. pdf页面转换成图片
+
+# 具体功能
+1. 图片拼接为pdf
+用户上传图片，选择pdf页面大小（默认为A4），设置合并后pdf的文件名称，上传图片后，支持拖拽调整图片顺序、根据文件名称、创建时间等方式调整文件顺序，将图片按照调整后的顺序，每个图片为pdf的一页生成pdf，并将合并后的pdf返回给用户下载。
+
+2. pdf页面转换成图片
+用户选择dpi（默认300）和图片类型（默认为png），上传pdf后，将pdf中的每个页面保存为之前选择类型的、适配用户选择dpi的图片，并将所有图片按照“[pdf文件名]-序号.[图片类型]”的方式命名，并将所有图片打包后返回给用户下载
+
+不同的功能通过侧边栏进行切换
+
+# 风格
+极简、现代风格
+
+---
+
+我试了一下，发现了下面需要优化的点，请你帮我逐点优化
+
+# pic2pdf 需要优化的点
+1. 增加图片拖拽改变顺序的功能
+2. setting中增加按照文件名称/创建时间/修改时间进行排序（顺序、倒序）
+3. 点击convert to pdf之后，展示出的 download 弹窗，download按钮颜色与背景色对比度不够，点击download按钮之后，并没有下载pdf的动作
+
+# pdf2pic 需要优化的点
+1. 上传pdf之后可以预览pdf的内容
+2. setting中增加设置导出页面具体页数的配置，仿照word中打印pdf的设置
+3. 点击convert to images之后，展示出的 download 弹窗，download按钮颜色与背景色对比度不够，点击download按钮之后，并没有下载图像的动作
+
+---
+
+images to pdf这个页面还有一个bug以及一个新特性。具体如下： 
+
+# BUGs
+settings里面有一个问题，就是pagesize和sortImages的默认值没有显示出来。
+
+# features
+settings里面还需要添加一个配置项，用来设置生成的pdf的页面是横向/纵向还是根据图片的长宽比来自动确定当前页是横向还是纵向。
+
+---
+
+很好，但目前images to pdf这个页面还有几个bug然后我还想加2个新特性。具体如下： 
+
+# BUGs
+1. 点击 convert to pdf之后，展示出的 download 弹窗，鼠标移动到download按钮之后，按钮的颜色和download字体颜色对比度不够
+2. Settings 中的 Page Orientation 选择为Auto时，需要根据图片的实际宽高比进行对应pdf页面的设置，当图片的宽高比>1时，该图片对应的pdf页面应该是横向，当图片的宽高比<=1时，该图片对应的pdf页面应该是纵向
+3. Settings 中的 Page Orientation 默认值为 Portrait
+
+# features
+1. settings 中增加一个页边距配置，具体取值可以参考word中的取值，默认为0。当时则hi了对应的页边距时，生成的pdf中所有页面需保留对应的页边距
+2. 页面上的合适位置增加一个一键删除所有已上传图片的按钮，点击该按钮，清空所有已上传图片
+
+---
+
+完美，images to pdf 这个页面目前应该没啥问题了，我们现在来看一下 pdf to images 这个页面。
+
+这个页面目前有一个bug：
+当我上传一个多页的pdf时，目前的下载功能是一张一张图片单独下载，这样的操作很反人类。而我期望的下载功能是，我点击下载按钮，然后你帮我打包这个pdf生成的所有页面，再让我下载。
+请你修复一下这个bug。
+
+---
+
+很好，但目前images to pdf页面还有3个bug：
+
+1.当我上传一个pdf、点击了convert to images按钮、出现download弹窗 之后，我又点击了pdf页面右上角的 关闭 按钮，但是这时 download 弹窗并没有消失。我期望的是我点击关闭按钮之后，download 弹窗同时也需要消失
+2. pdf预览页面中，展示的pdf内容都是空白内容，但我期望展示的是pdf的预览内容
+3. 图片名称“[pdf文件名]-序号.[图片类型]”中的序号，需要根据pdf的总页数，往前面补0。比如，导出的页面为5-10，如果pdf的总页数为234，则这时页面5对应的序号应该是005；如果pdf的总页数为11，则这时页面5对应的序号应该是05，以此类推。
+
+---
+
+发现2个bug，具体如下：
+
+# BUGs
+1. 当我在 pdf to images 和 images to pdf 这两个标签页之间切换时，如果之前出现了 download 弹窗，这个弹窗不会自动关闭，我希望在这两个标签页切换时，如果存在切换之前的download弹窗，请把这个弹窗关闭
+2. pdf to images页面中的pdf预览的页面渲染，还是存在问题，不能正确显示pdf的内容预览
+
+同时，我还想再增加1个特性，
+# features
+1. pdf to images 和 images to pdf 这两个页面的配色是否可以不一样，或者至少在标题上的 Image to PDF Converter 和 PDF to Image Converter 体现出区别
+
+2. 左侧的 PicTools 中的 images to pdf 和 pdf to images，占据的位置宽度目前不可调整，能否设置为可调整宽度
+
+---
+
+pdf to images 页面中，当我点击convert to images 按钮时，弹出了 download 的弹窗，上面有一个 download 按钮，但是当我鼠标移动到这个按钮上面时，这个按钮的颜色和download这个文字变得对比度很低，难以分辨。请你参考images to pdf页面中download按钮的处理逻辑，修改下pdf to images页面的download按钮的这个bug
+
+---
+
+有一个优化点，就是 images to pdf 页面 与 pdf to images 页面的布局不太一致，能否将这两个页面的布局改成一致的，也就是说将两个页面的settings框和upload框的大小和位置改成一样的
+
+---
+
+很好，能否将两个页面的标题颜色稍做区分，以保证人们看到页面是可以明显区分这两个页面
+
+---
+
+很好，目前还有一个问题，就是页面切换的时候耗时过长，能否优化下页面切换时的加载速度
+
+---
+
+当前项目有一个功能 pdf to images，主要的作用就是将用户上传的pdf转换成图片之后打包下载。但目前这个功能 存在一个问题，就是在用户上传完pdf之后，页面上的预览区域无法正常预览pdf内容。我现在希望你帮我修复这个问题，采用下面的实现方法：将 PDF 文件中的页面转化成图片进行展示。
+
+---
+
+很好，现在可以预览了，但现在有个问题，就是在渲染PDF页面的时候，能否保证预览窗口的大小不变，缩放待预览的图片
+
+---
+
+我要把这个项目打包成一个docker镜像，要求在包含项目完整功能的前提下，镜像体积越小越好，你能帮我写一个Dockerfile吗？
+
+---
+
+当前项目有一个功能 pdf to images，主要的作用就是将用户上传的pdf转换成图片之后打包下载。但目前这个功能 存在一个问题，就是在用户上传完pdf之后，点击download按钮，页面会报错，请你帮我分析下是什么原因，以及怎么解决
+
+Image conversion failed: TypeError: (intermediate value) is not a constructor
+
+---
+
+帮我重写readme文件，包含项目标题 (Project Title)、项目简介 (Description)、项目背景/动机 (Background/Motivation)、功能特性 (Features)、技术栈 (Tech Stack)、安装指南 (Installation)、使用方法 (Usage)等
