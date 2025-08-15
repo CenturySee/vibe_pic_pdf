@@ -223,7 +223,6 @@ export default function PdfToImagesClient() {
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
-                URL.revokeObjectURL(downloadUrl);
               }}
               className="bg-accent-foreground text-accent hover:bg-accent hover:text-accent-foreground"
               >
