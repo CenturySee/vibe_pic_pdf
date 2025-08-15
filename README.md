@@ -1,6 +1,11 @@
 # Pic2PDF & PDF2Pic - 图片PDF互转工具
 
-一个功能强大的 Next.js 应用，可以轻松实现图片与 PDF 文件之间的相互转换。
+> 一个通过vibe coding构建的、功能强大（不是）的 Next.js 应用，可以轻松实现图片与 PDF 文件之间的相互转换。
+> 全程 vibe coding 编写，建议小范围私有化部署。
+
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
 ## 功能特性
 
@@ -30,14 +35,27 @@
 - **拖拽**: react-dnd
 - **图标**: lucide-react
 
-## 快速开始
+## 🚀 快速开始
 
-### 前置要求
+### 使用 Docker (推荐)
+
+只需一行命令即可启动应用：
+
+```bash
+# 需有科学上网环境
+docker compose up -d
+```
+
+应用将在 http://localhost:3000 运行
+
+### 本地开发
+
+#### 前置要求
 
 - Node.js 18 或更高版本
 - npm 或 yarn 包管理器
 
-### 安装
+#### 安装
 
 ```bash
 # 克隆项目
@@ -50,7 +68,7 @@ cd pic_pdf
 npm install
 ```
 
-### 开发
+#### 开发
 
 ```bash
 # 启动开发服务器
@@ -59,16 +77,12 @@ npm run dev
 
 访问 http://localhost:9002 查看应用。
 
-### 构建
+#### 构建和运行
 
 ```bash
 # 构建生产版本
 npm run build
-```
 
-### 运行生产版本
-
-```bash
 # 启动生产服务器
 npm run start
 ```
@@ -101,41 +115,68 @@ npm run start
 5. 点击 "Convert to Images" 按钮
 6. 转换完成后点击 "Download ZIP" 下载包含所有图片的压缩包
 
-## 项目结构
+## 📁 项目结构
 
 ```
-src/
-├── app/                 # Next.js 应用路由
-│   ├── page.tsx         # 图片转 PDF 主页
-│   ├── images-to-pdf-client.tsx  # 图片转 PDF 客户端组件
-│   └── pdf-to-images/   # PDF 转图片功能模块
-├── components/          # React 组件
-├── hooks/               # React 自定义 hooks
-├── lib/                 # 工具函数和库
-└── ai/                  # AI 相关功能（Genkit）
+├── src/
+│   ├── app/                    # Next.js 应用路由
+│   │   ├── page.tsx            # 图片转 PDF 主页
+│   │   ├── images-to-pdf-client.tsx  # 图片转 PDF 客户端组件
+│   │   └── pdf-to-images/      # PDF 转图片功能模块
+│   ├── components/             # React 组件
+│   ├── hooks/                  # React 自定义 hooks
+│   ├── lib/                    # 工具函数和库
+│   └── ai/                     # AI 相关功能（Genkit）
+├── Dockerfile                  # 生产环境 Docker 配置
+├── Dockerfile.dev              # 开发环境 Docker 配置
+├── docker-compose.yml          # Docker Compose 配置
+├── next.config.ts              # Next.js 配置
+└── package.json                # 项目依赖
 ```
 
-## 可用脚本
+## 🛠️ 可用脚本
 
-- `npm run dev` - 启动开发服务器
-- `npm run build` - 构建生产版本
-- `npm run start` - 启动生产服务器
-- `npm run lint` - 运行 ESLint 检查
-- `npm run typecheck` - 运行 TypeScript 类型检查
+```bash
+npm run dev          # 启动开发服务器 (端口 9002)
+npm run build        # 构建生产版本
+npm run start        # 启动生产服务器 (端口 3000)
+npm run lint         # 运行 ESLint 检查
+npm run typecheck    # 运行 TypeScript 类型检查
+```
 
-## 部署
+## 🐳 Docker 部署
 
-该应用配置为可独立部署（standalone output），可以轻松部署到各种云平台：
+### Docker Compose (推荐)
 
-- Vercel（推荐）
-- Firebase Hosting
-- Netlify
-- 传统 Node.js 服务器
+```bash
+# 启动服务
+docker compose up -d
 
-## 贡献
+# 查看日志
+docker compose logs -f
 
-欢迎提交 Issue 和 Pull Request 来改进这个项目。
+# 停止服务
+docker compose down
+```
 
-## 许可证
+### 手动 Docker 构建
+
+```bash
+# 构建镜像
+docker build -t pic-pdf .
+
+# 运行容器
+docker run -d -p 3000:3000 --name pic-pdf-app pic-pdf
+```
+
+## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+---
+
+<div align="center">
+
+**⭐ 如果这个项目对你有帮助，请考虑给一个 Star！**
+
+</div>

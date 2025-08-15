@@ -45,9 +45,9 @@ firebase-debug.log
 firestore-debug.log
 
 # Docker
-.dockerignore
-Dockerfile
-docker-compose*.yml
+# .dockerignore
+# Dockerfile
+# docker-compose*.yml
 
 # IDE
 .vscode/
