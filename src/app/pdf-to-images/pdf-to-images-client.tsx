@@ -9,13 +9,26 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Upload, X, FileImage, FileText, LoaderCircle, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import { PageHeader } from '@/components/page-header';
-import * as pdfjsLib from 'pdfjs-dist';
-import JSZip from 'jszip';
+// 动态导入大型库以减少初始bundle大小
+let pdfjsLib: any;
+let JSZip: any;
 
+const loadPdfJs = async () => {
+  if (!pdfjsLib) {
+    pdfjsLib = await import('pdfjs-dist');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+  }
+  return pdfjsLib;
+};
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+const loadJsZip = async () => {
+  if (!JSZip) {
+    JSZip = await import('jszip');
+  }
+  return JSZip;
+};
 
-async function getPdfPageAsImage(pdf: pdfjsLib.PDFDocumentProxy, pageNumber: number, dpi: number) {
+async function getPdfPageAsImage(pdf: any, pageNumber: number, dpi: number) {
     const page = await pdf.getPage(pageNumber);
     const viewport = page.getViewport({ scale: dpi / 96 });
     const canvas = document.createElement('canvas');
@@ -33,7 +46,7 @@ async function getPdfPageAsImage(pdf: pdfjsLib.PDFDocumentProxy, pageNumber: num
 
 export default function PdfToImagesClient() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
+  const [pdfDoc, setPdfDoc] = useState<any>(null);
   const [numPages, setNumPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSelection, setPageSelection] = useState<string>('all');
@@ -54,8 +67,9 @@ export default function PdfToImagesClient() {
         setPdfFile(file);
         setIsPreviewLoading(true);
         try {
+            const pdfjs = await loadPdfJs();
             const arrayBuffer = await file.arrayBuffer();
-            const loadingTask = pdfjsLib.getDocument(arrayBuffer);
+            const loadingTask = pdfjs.getDocument(arrayBuffer);
             const pdf = await loadingTask.promise;
             setPdfDoc(pdf);
             setNumPages(pdf.numPages);
@@ -187,7 +201,8 @@ export default function PdfToImagesClient() {
     });
 
     try {
-        const zip = new JSZip();
+        const JsZip = await loadJsZip();
+        const zip = new JsZip();
         const baseFilename = pdfFile.name.replace(/\.pdf$/i, '');
         const padLength = String(numPages).length;
 

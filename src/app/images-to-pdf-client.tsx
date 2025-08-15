@@ -74,7 +74,7 @@ const ImageCard: React.FC<ImageCardProps> = ({ image, index, moveImage, removeIm
 
   return (
     <div
-      ref={preview}
+      ref={preview as any}
       style={{ opacity: isDragging ? 0.5 : 1 }}
       className="relative group overflow-hidden rounded-lg shadow-sm"
     >

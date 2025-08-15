@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { FileImage, FileText } from 'lucide-react';
@@ -20,6 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { dismiss } = useToast();
   const dismissRef = useRef(dismiss);
 
@@ -32,6 +33,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     dismissRef.current();
   }, [pathname]);
+
+  // Preload the other route when hovering over navigation items
+  const handleNavHover = (href: string) => {
+    if (href !== pathname) {
+      router.prefetch(href);
+    }
+  };
 
   return (
     <SidebarProvider>
@@ -49,6 +57,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 asChild
                 isActive={pathname === '/'}
                 tooltip="Images to PDF"
+                onMouseEnter={() => handleNavHover('/')}
               >
                 <Link href="/">
                   <FileImage />
@@ -61,6 +70,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 asChild
                 isActive={pathname === '/pdf-to-images'}
                 tooltip="PDF to Images"
+                onMouseEnter={() => handleNavHover('/pdf-to-images')}
               >
                 <Link href="/pdf-to-images">
                   <FileText />
