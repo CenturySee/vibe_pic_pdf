@@ -289,7 +289,7 @@ export default function ImagesToPdfClient() {
     <DndProvider backend={HTML5Backend}>
       <div className="container mx-auto max-w-7xl">
         <PageHeader 
-          title="Image to PDF Converter"
+          title="Images to PDF Converter"
           description="Upload your images, reorder them by dragging, and combine them into a single, high-quality PDF document."
           titleColor="text-blue-600"
         />

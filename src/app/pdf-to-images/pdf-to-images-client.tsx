@@ -250,7 +250,7 @@ export default function PdfToImagesClient() {
   return (
     <div className="container mx-auto max-w-7xl">
       <PageHeader
-        title="PDF to Image Converter"
+        title="PDF to Images Converter"
         description="Upload a PDF and convert each page into a high-resolution image. Choose your desired format and quality."
         titleColor="text-green-600"
       />
