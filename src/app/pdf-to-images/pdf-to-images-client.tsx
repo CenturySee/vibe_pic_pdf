@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -55,8 +55,8 @@ export default function PdfToImagesClient() {
   const [imageType, setImageType] = useState<'png' | 'jpeg' | 'webp'>('png');
   const [isConverting, setIsConverting] = useState<boolean>(false);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string>('');
   const { toast, dismiss } = useToast();
-  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -103,39 +103,35 @@ export default function PdfToImagesClient() {
 
   useEffect(() => {
     const renderPreview = async () => {
-        if (pdfDoc && currentPage > 0 && currentPage <= numPages) {
-            setIsPreviewLoading(true);
-            try {
-                const page = await pdfDoc.getPage(currentPage);
-                const viewport = page.getViewport({ scale: 1.5 }); // Use a fixed scale for preview
-                const previewCanvas = previewCanvasRef.current;
-                 if (previewCanvas) {
-                    const previewContext = previewCanvas.getContext('2d');
-                    if (previewContext) {
-                        // Clear canvas before rendering
-                        previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-                        previewCanvas.height = viewport.height;
-                        previewCanvas.width = viewport.width;
-                        
-                        // Set canvas background to white
-                        previewContext.fillStyle = 'white';
-                        previewContext.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
-                        
-                        await page.render({ canvasContext: previewContext, viewport: viewport }).promise;
-                    }
-                 }
-            } catch (e) {
-                console.error("error rendering preview", e);
-                // Show error toast if preview fails
-                toast({
-                    title: "Preview Error",
-                    description: "Could not render PDF preview. Please try again.",
-                    variant: "destructive",
-                });
-            } finally {
-                setIsPreviewLoading(false);
-            }
+      if (pdfDoc && currentPage > 0 && currentPage <= numPages) {
+        setIsPreviewLoading(true);
+        setPreviewImageUrl('');
+        try {
+          const page = await pdfDoc.getPage(currentPage);
+          const viewport = page.getViewport({ scale: 1.5 });
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          if (context) {
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+            setPreviewImageUrl(canvas.toDataURL('image/png'));
+          } else {
+            throw new Error('Could not get canvas context for preview');
+          }
+        } catch (e) {
+            console.error("error rendering preview", e);
+            // Show error toast if preview fails
+            toast({
+                title: "Preview Error",
+                description: "Could not render PDF preview. Please try again.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsPreviewLoading(false);
         }
+      }
     };
     renderPreview();
   }, [pdfDoc, currentPage, numPages, toast]);
@@ -145,13 +141,7 @@ export default function PdfToImagesClient() {
     setPdfDoc(null);
     setNumPages(0);
     setCurrentPage(1);
-    const previewCanvas = previewCanvasRef.current;
-    if (previewCanvas) {
-        const context = previewCanvas.getContext('2d');
-        if (context) {
-            context.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-        }
-    }
+    setPreviewImageUrl('');
     dismiss();
   };
 
@@ -302,14 +292,14 @@ export default function PdfToImagesClient() {
                       <X className="w-5 h-5" />
                     </Button>
                   </div>
-                  <div className="mt-4 border rounded-lg p-2 flex flex-col items-center justify-center bg-muted/50 min-h-[300px]">
+                  <div className="mt-4 border rounded-lg flex items-center justify-center bg-muted/50 h-[500px] overflow-hidden">
                     {isPreviewLoading ? (
-                        <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                          <LoaderCircle className="w-8 h-8 animate-spin text-primary"/>
-                          <span>Loading Preview...</span>
-                        </div>
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <LoaderCircle className="w-8 h-8 animate-spin text-primary" />
+                        <span>Loading Preview...</span>
+                      </div>
                     ) : (
-                        <canvas ref={previewCanvasRef} className="max-w-full h-auto rounded shadow-md"></canvas>
+                      previewImageUrl && <img src={previewImageUrl} alt={`Preview of page ${currentPage}`} className="w-full h-full object-contain" />
                     )}
                   </div>
                 </div>
