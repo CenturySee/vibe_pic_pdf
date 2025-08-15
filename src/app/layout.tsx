@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppLayout } from "@/components/layout/app-layout";
 import { Toaster } from "@/components/ui/toaster";
+import { GlobalLoadingIndicator } from "@/components/global-loading-indicator";
 
 export const metadata: Metadata = {
   title: "Pic2PDF & PDF2Pic",
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <AppLayout>{children}</AppLayout>
         <Toaster />
+        <GlobalLoadingIndicator />
       </body>
     </html>
   );
