@@ -171,7 +171,7 @@ docker run -d -p 3000:3000 --name pic-pdf-app pic-pdf
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+本项目没有任何许可，可随意使用，但一切后果由使用者承担😅。
 
 ---
 
