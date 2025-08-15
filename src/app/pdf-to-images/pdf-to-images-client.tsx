@@ -191,8 +191,9 @@ export default function PdfToImagesClient() {
     });
 
     try {
-        const JsZip = await loadJsZip();
-        const zip = new JsZip();
+        const JsZipModule = await loadJsZip();
+        const JSZip = JsZipModule.default || JsZipModule;
+        const zip = new JSZip();
         const baseFilename = pdfFile.name.replace(/\.pdf$/i, '');
         const padLength = String(numPages).length;
 
